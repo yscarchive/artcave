@@ -12,7 +12,6 @@
     --shadow: 0 18px 40px rgba(0,0,0,.18);
     --bg: #0b0b0e;
   }
-
   body {
     margin: 0;
     min-height: 100vh;
@@ -22,12 +21,7 @@
     color: #e9eaee;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
   }
-
-  .stage {
-    display: grid;
-    gap: 28px;
-  }
-
+  .stage { display: grid; gap: 28px; }
   .hover-landing {
     width: var(--w);
     height: var(--h);
@@ -39,53 +33,38 @@
     perspective: 1000px;
     transform-style: preserve-3d;
     will-change: transform;
+    touch-action: none; /* 터치 스크롤 간섭 방지 */
   }
-
   .hover-landing__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
     transform-origin: center;
     backface-visibility: hidden;
     will-change: transform, filter, opacity;
     transition: filter .35s ease, opacity .35s ease;
   }
-
-  /* 선택: 살짝 빛나는 오버레이 */
   .hover-landing::after {
     content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(60% 80% at 50% 10%, rgba(255,255,255,.14), rgba(255,255,255,0) 60%),
-                radial-gradient(120% 120% at -10% 110%, rgba(0,180,255,.10), rgba(0,0,0,0) 40%),
-                radial-gradient(120% 120% at 110% 110%, rgba(255,120,0,.08), rgba(0,0,0,0) 40%);
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(60% 80% at 50% 10%, rgba(255,255,255,.14), rgba(255,255,255,0) 60%),
+      radial-gradient(120% 120% at -10% 110%, rgba(0,180,255,.10), rgba(0,0,0,0) 40%),
+      radial-gradient(120% 120% at 110% 110%, rgba(255,120,0,.08), rgba(0,0,0,0) 40%);
     pointer-events: none;
     mix-blend-mode: screen;
     opacity: .55;
     transition: opacity .4s ease;
   }
   .hover-landing.is-idle::after { opacity: .25; }
-
-  /* 접근성 포커스 */
-  .hover-landing:focus-visible {
-    outline: 2px solid #76b9ff;
-    outline-offset: 4px;
-  }
-
-  /* 보조 텍스트 */
-  .caption {
-    text-align: center;
-    font-size: 14px;
-    color: #aab0bc;
-  }
+  .hover-landing:focus-visible { outline: 2px solid #76b9ff; outline-offset: 4px; }
+  .caption { text-align: center; font-size: 14px; color: #aab0bc; }
 </style>
 </head>
 <body>
   <div class="stage">
     <figure class="hover-landing is-idle" tabindex="0"
-            data-translate="18" data-tilt="8" data-scale="1.04" data-inertia=".12" data-return=".10">
+            data-translate="18" data-tilt="8" data-scale="1.04" data-inertia=".12" data-return-speed=".10">
       <img class="hover-landing__img"
            src="https://images.unsplash.com/photo-1520975922284-56cddf6de396?q=80&w=1600&auto=format&fit=crop"
            alt="Landing visual 1" />
@@ -93,9 +72,8 @@
 
     <div class="caption">마우스를 올리면 부드러운 관성으로 ‘랜딩’하고, 떼면 원위치로 자연스럽게 복귀합니다.</div>
 
-    <!-- 예시 2: 강도 커스텀 -->
     <figure class="hover-landing is-idle" tabindex="0"
-            data-translate="26" data-tilt="12" data-scale="1.06" data-inertia=".16" data-return=".12">
+            data-translate="26" data-tilt="12" data-scale="1.06" data-inertia=".16" data-return-speed=".12">
       <img class="hover-landing__img"
            src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1600&auto=format&fit=crop"
            alt="Landing visual 2" />
@@ -111,17 +89,17 @@
       this.el = el;
       this.img = el.querySelector('.hover-landing__img');
 
-      // 옵션
-      this.maxTranslate = parseFloat(el.dataset.translate || 18); // px
-      this.maxTilt = parseFloat(el.dataset.tilt || 8);           // deg
+      this.maxTranslate = parseFloat(el.dataset.translate || 18);
+      this.maxTilt = parseFloat(el.dataset.tilt || 8);
       this.scale = parseFloat(el.dataset.scale || 1.04);
-      this.inertia = parseFloat(el.dataset.inertia || 0.12);     // 0~1 (값이 클수록 빨리 따라옴)
-      this.retSpeed = parseFloat(el.dataset.return || 0.10);     // 복귀 시 감쇠
+      this.inertia = parseFloat(el.dataset.inertia || 0.12);
+      // 예약어 회피: data-return-speed 사용
+      this.retSpeed = parseFloat(el.dataset.returnSpeed || 0.10);
 
       this.rect = null;
-      this.pointer = { x: 0, y: 0 };     // 0~1 범위
+      this.pointer = { x: 0, y: 0 };
       this.target = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
-      this.state = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
+      this.state  = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
 
       this._over = false;
       this._raf = null;
@@ -134,8 +112,12 @@
       this.el.addEventListener('pointermove', this.onMove);
       this.el.addEventListener('pointerleave', this.onLeave);
       this.el.addEventListener('blur', this.onLeave);
-      // 터치 대비
-      this.el.addEventListener('touchstart', (e)=> e.preventDefault(), {passive:false});
+      // 터치: 포인터 캡처로 안정적인 move 이벤트 보장
+      this.el.addEventListener('pointerdown', (e) => {
+        this.el.setPointerCapture(e.pointerId);
+        this.onEnter();
+        this.onMove(e);
+      });
     }
 
     onEnter = () => {
@@ -150,15 +132,14 @@
       if (!this.rect) this.rect = this.el.getBoundingClientRect();
       const x = clamp((e.clientX - this.rect.left) / this.rect.width, 0, 1);
       const y = clamp((e.clientY - this.rect.top) / this.rect.height, 0, 1);
-      this.pointer.x = x;
-      this.pointer.y = y;
+      this.pointer.x = x; this.pointer.y = y;
 
-      const cx = (x - 0.5) * 2; // -1 ~ 1
+      const cx = (x - 0.5) * 2;
       const cy = (y - 0.5) * 2;
 
       this.target.tx = -cx * this.maxTranslate;
       this.target.ty = -cy * this.maxTranslate * 0.8;
-      this.target.ry = cx * this.maxTilt;
+      this.target.ry =  cx * this.maxTilt;
       this.target.rx = -cy * this.maxTilt;
       this.target.s  = this.scale;
     }
@@ -166,12 +147,7 @@
     onLeave = () => {
       this._over = false;
       this.el.classList.add('is-idle');
-      // 복귀 타겟
-      this.target.tx = 0;
-      this.target.ty = 0;
-      this.target.rx = 0;
-      this.target.ry = 0;
-      this.target.s  = 1;
+      this.target = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
     }
 
     loop = () => {
@@ -188,23 +164,21 @@
                  rotateX(${this.state.rx}deg)
                  rotateY(${this.state.ry}deg)
                  scale(${this.state.s})`;
-
       this.img.style.transform = t;
 
-      // 입체감 보정(선택)
       const blurAmt = Math.min(Math.hypot(this.state.tx, this.state.ty) / 28, 1.1);
       this.img.style.filter = `saturate(${1 + blurAmt * 0.1}) brightness(${1 + blurAmt * 0.06})`;
 
-      if (
-        Math.abs(this.state.tx - this.target.tx) > 0.02 ||
-        Math.abs(this.state.ty - this.target.ty) > 0.02 ||
-        Math.abs(this.state.rx - this.target.rx) > 0.02 ||
-        Math.abs(this.state.ry - this.target.ry) > 0.02 ||
-        Math.abs(this.state.s  - this.target.s)  > 0.0005
-      ) {
+      const near =
+        Math.abs(this.state.tx - this.target.tx) <= 0.02 &&
+        Math.abs(this.state.ty - this.target.ty) <= 0.02 &&
+        Math.abs(this.state.rx - this.target.rx) <= 0.02 &&
+        Math.abs(this.state.ry - this.target.ry) <= 0.02 &&
+        Math.abs(this.state.s  - this.target.s ) <= 0.0005;
+
+      if (!near) {
         this._raf = requestAnimationFrame(this.loop);
       } else if (!this._over) {
-        // 최종 정착
         this.img.style.transform = `translate3d(0,0,0) rotateX(0) rotateY(0) scale(1)`;
         this.img.style.filter = `none`;
       } else {
