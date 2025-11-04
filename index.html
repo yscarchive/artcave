@@ -1,55 +1,220 @@
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-        body {
-            text-align: center;
-            font-family: "Poppins", sans-serif;
-            background-color: #ffff00; 
-        }
-        /* 링크 사이에 수평선 스타일 */
-        a {
-            border-bottom: 2px dashed black;
-            text-decoration: none; /* 링크에 밑줄 제거 */
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hover Landing Image</title>
+<style>
+  :root {
+    --w: 560px;
+    --h: 360px;
+    --radius: 18px;
+    --shadow: 0 18px 40px rgba(0,0,0,.18);
+    --bg: #0b0b0e;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(1000px 600px at 50% 0%, #17181f 0%, #0b0b0e 70%);
+    color: #e9eaee;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  }
+
+  .stage {
+    display: grid;
+    gap: 28px;
+  }
+
+  .hover-landing {
+    width: var(--w);
+    height: var(--h);
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: #11131a;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .hover-landing__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center;
+    backface-visibility: hidden;
+    will-change: transform, filter, opacity;
+    transition: filter .35s ease, opacity .35s ease;
+  }
+
+  /* 선택: 살짝 빛나는 오버레이 */
+  .hover-landing::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 80% at 50% 10%, rgba(255,255,255,.14), rgba(255,255,255,0) 60%),
+                radial-gradient(120% 120% at -10% 110%, rgba(0,180,255,.10), rgba(0,0,0,0) 40%),
+                radial-gradient(120% 120% at 110% 110%, rgba(255,120,0,.08), rgba(0,0,0,0) 40%);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: .55;
+    transition: opacity .4s ease;
+  }
+  .hover-landing.is-idle::after { opacity: .25; }
+
+  /* 접근성 포커스 */
+  .hover-landing:focus-visible {
+    outline: 2px solid #76b9ff;
+    outline-offset: 4px;
+  }
+
+  /* 보조 텍스트 */
+  .caption {
+    text-align: center;
+    font-size: 14px;
+    color: #aab0bc;
+  }
+</style>
 </head>
 <body>
-    <img width="30%" src="https://github.com/yscarchive/artcave/assets/168803435/2a2f7019-e09d-4cb4-bf5e-289df8c0c5d0"/>
-    <br> 
-    <br>
-    <div> 
-        <span style="font-weight:600; font-size: 22px;"> 2019 ------------ NOW! </span>
-    </div>
-    <div> 
-        <span style="font-weight:500; font-size: 18px;"> yscarchive </span>
-    </div>
-    <br> 
-    <!-- 링크들 -->
-    <a href="https://yscarchive.github.io/artcave/personal.html" title="personal.html">Personal Area </a>
-    <br>
-     <br>
-    <a href="https://yscarchive.github.io/artcave/official.html" title="official.html">Official Area </a>
-    <br>
-     <br>
-    <a href="https://yscarchive.github.io/artcave/photo.html" title="photo.html">Photo</a>
-     <br>
-     <br>
-    <a href="https://yscarchive.github.io/artcave/garage.html" title="garage.html">Collector's Garage</a>
-    <br>
-     <br>
-    <a href="https://www.instagram.com/ysc.archive/" title="social">instagram</a>
-    <br>
-    <br>
-    <img width="20%" src="https://github.com/yscarchive/artcave/assets/168803435/f1f8306c-1ff6-458e-aef5-231ac49f1a04"/>
-        <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-<br>
-    <span style="font-weight:500; font-size: 12px;">  ©2024. yscarchive All pictures cannot be copied without permission. </span>
+  <div class="stage">
+    <figure class="hover-landing is-idle" tabindex="0"
+            data-translate="18" data-tilt="8" data-scale="1.04" data-inertia=".12" data-return=".10">
+      <img class="hover-landing__img"
+           src="https://images.unsplash.com/photo-1520975922284-56cddf6de396?q=80&w=1600&auto=format&fit=crop"
+           alt="Landing visual 1" />
+    </figure>
+
+    <div class="caption">마우스를 올리면 부드러운 관성으로 ‘랜딩’하고, 떼면 원위치로 자연스럽게 복귀합니다.</div>
+
+    <!-- 예시 2: 강도 커스텀 -->
+    <figure class="hover-landing is-idle" tabindex="0"
+            data-translate="26" data-tilt="12" data-scale="1.06" data-inertia=".16" data-return=".12">
+      <img class="hover-landing__img"
+           src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1600&auto=format&fit=crop"
+           alt="Landing visual 2" />
+    </figure>
+  </div>
+
+<script>
+(() => {
+  const clamp = (n, min, max) => Math.max(min, Math.min(n, max));
+
+  class HoverLanding {
+    constructor(el) {
+      this.el = el;
+      this.img = el.querySelector('.hover-landing__img');
+
+      // 옵션
+      this.maxTranslate = parseFloat(el.dataset.translate || 18); // px
+      this.maxTilt = parseFloat(el.dataset.tilt || 8);           // deg
+      this.scale = parseFloat(el.dataset.scale || 1.04);
+      this.inertia = parseFloat(el.dataset.inertia || 0.12);     // 0~1 (값이 클수록 빨리 따라옴)
+      this.retSpeed = parseFloat(el.dataset.return || 0.10);     // 복귀 시 감쇠
+
+      this.rect = null;
+      this.pointer = { x: 0, y: 0 };     // 0~1 범위
+      this.target = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
+      this.state = { tx: 0, ty: 0, rx: 0, ry: 0, s: 1 };
+
+      this._over = false;
+      this._raf = null;
+
+      this.bind();
+    }
+
+    bind() {
+      this.el.addEventListener('pointerenter', this.onEnter);
+      this.el.addEventListener('pointermove', this.onMove);
+      this.el.addEventListener('pointerleave', this.onLeave);
+      this.el.addEventListener('blur', this.onLeave);
+      // 터치 대비
+      this.el.addEventListener('touchstart', (e)=> e.preventDefault(), {passive:false});
+    }
+
+    onEnter = () => {
+      this.rect = this.el.getBoundingClientRect();
+      this._over = true;
+      this.el.classList.remove('is-idle');
+      cancelAnimationFrame(this._raf);
+      this.loop();
+    }
+
+    onMove = (e) => {
+      if (!this.rect) this.rect = this.el.getBoundingClientRect();
+      const x = clamp((e.clientX - this.rect.left) / this.rect.width, 0, 1);
+      const y = clamp((e.clientY - this.rect.top) / this.rect.height, 0, 1);
+      this.pointer.x = x;
+      this.pointer.y = y;
+
+      const cx = (x - 0.5) * 2; // -1 ~ 1
+      const cy = (y - 0.5) * 2;
+
+      this.target.tx = -cx * this.maxTranslate;
+      this.target.ty = -cy * this.maxTranslate * 0.8;
+      this.target.ry = cx * this.maxTilt;
+      this.target.rx = -cy * this.maxTilt;
+      this.target.s  = this.scale;
+    }
+
+    onLeave = () => {
+      this._over = false;
+      this.el.classList.add('is-idle');
+      // 복귀 타겟
+      this.target.tx = 0;
+      this.target.ty = 0;
+      this.target.rx = 0;
+      this.target.ry = 0;
+      this.target.s  = 1;
+    }
+
+    loop = () => {
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const follow = this._over ? this.inertia : this.retSpeed;
+
+      this.state.tx = lerp(this.state.tx, this.target.tx, follow);
+      this.state.ty = lerp(this.state.ty, this.target.ty, follow);
+      this.state.rx = lerp(this.state.rx, this.target.rx, follow);
+      this.state.ry = lerp(this.state.ry, this.target.ry, follow);
+      this.state.s  = lerp(this.state.s,  this.target.s,  follow);
+
+      const t = `translate3d(${this.state.tx}px, ${this.state.ty}px, 0)
+                 rotateX(${this.state.rx}deg)
+                 rotateY(${this.state.ry}deg)
+                 scale(${this.state.s})`;
+
+      this.img.style.transform = t;
+
+      // 입체감 보정(선택)
+      const blurAmt = Math.min(Math.hypot(this.state.tx, this.state.ty) / 28, 1.1);
+      this.img.style.filter = `saturate(${1 + blurAmt * 0.1}) brightness(${1 + blurAmt * 0.06})`;
+
+      if (
+        Math.abs(this.state.tx - this.target.tx) > 0.02 ||
+        Math.abs(this.state.ty - this.target.ty) > 0.02 ||
+        Math.abs(this.state.rx - this.target.rx) > 0.02 ||
+        Math.abs(this.state.ry - this.target.ry) > 0.02 ||
+        Math.abs(this.state.s  - this.target.s)  > 0.0005
+      ) {
+        this._raf = requestAnimationFrame(this.loop);
+      } else if (!this._over) {
+        // 최종 정착
+        this.img.style.transform = `translate3d(0,0,0) rotateX(0) rotateY(0) scale(1)`;
+        this.img.style.filter = `none`;
+      } else {
+        this._raf = requestAnimationFrame(this.loop);
+      }
+    }
+  }
+
+  document.querySelectorAll('.hover-landing').forEach(el => new HoverLanding(el));
+})();
+</script>
 </body>
 </html>
